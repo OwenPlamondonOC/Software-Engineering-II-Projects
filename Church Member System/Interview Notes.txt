@@ -19,3 +19,9 @@ Send announcements on public version of app?
 Change status of active/inactive automatically
 Website accessible in Spanish as well
 No online classes
+
+Features:
+Create and manage van routes
+Collect and organize data from attendees
+Keep track of attendees at events
+Closed system with admin control
