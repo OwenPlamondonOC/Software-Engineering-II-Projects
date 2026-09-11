@@ -1,0 +1,21 @@
+Church: 120-150 attend
+hard to keep track of the people, currently on paper
+people are supposed to fill out a card, but is unreliable
+drive vans to pick up people for church. need to organize information to be available
+
+Windows laptop is the computer
+mobile app would be good for users
+each van route has a list of stops, who is at each stop, assigned driver to each route, and a name
+want to know average time to drive the route.
+Want to collect First and Last names, address, phone number, emails, (for kids) what school,
+	first contact date, have been baptized, what family are they a part of.
+Not completely open system, have some control over who can do what.
+Get information of people who are guests as well as members
+about a dozen people using the system at a time.
+Plan to add/remove/change van routes.
+Be able to add people who can't add themselves
+Keep some demographic data
+Send announcements on public version of app?
+Change status of active/inactive automatically
+Website accessible in Spanish as well
+No online classes
