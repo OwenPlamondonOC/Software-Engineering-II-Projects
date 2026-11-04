@@ -78,3 +78,73 @@
 * **When** I enter a employee and new information regarding the employee
 * **And** The employee does not exist in the system
 * **Then** I am informed that the employee does not exist and the database remains unchanged
+
+## Data Ownership & Isolation
+Employee data is shared between users
+| Rule | Requirement |
+|------|-------------|
+| **Read scope** | Only logged in Warehouse Managers can see employee information  |
+| **Write scope** | Only logged in Warehouse Admins can edit or remove emplyees if they exist `id` and `req.user.id` |
+| **Create scope** | Only logged in Warehouse Admins can add new employees |
+| **Cross-user access** | Accessing data without sufficient permission levels returns a `404` |
+| **UI scope** | UI shows only data returned for the signed-in user |
+| **Implementation** | Shared helper in `app/authorization/` — do not duplicate scope in every controller |
+
+## API Requirements
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/employees/read` | Yes | Read a employee's information |
+| `POST` | `/employees/edit` | Yes | Change an existing employee's information |
+| `POST` | `/employees/add` | Yes | Add a new employee |
+
+**Create / edit success response** (flat JSON, no envelope):
+```json
+{
+  "employeeid": 1,
+  "employeeName": "Example",
+  "employeeAddress": "ExAddress",
+  "employeePhone": "111-111-1111:",
+  "employeeEmail": "example@example.ex"
+}
+```
+
+**Error response:** `{ "message": "Human-readable explanation." }` with appropriate HTTP status.
+
+---
+
+## Screen Requirements
+
+### [View: Read Page] — route name `read`
+*   Uses a `MenuBar` to quickly leave page.
+*   No text fields
+*   Displays employee information
+
+### [View: Edit Page] — route name `edit`
+*   Fields: fields for all data of the employee.
+*   Primary action: **Edit Employee**.
+*   Buttons to save or cancel editing of employee
+*   Verify pressing of save or cancel button
+
+### [View: Add Page] — route name `add`
+*   Fields: fields for all data of the employee.
+*   Primary action: **Add Employee**.
+*   Buttons to save or cancel addition of employee
+*   Verify pressing of save or cancel button
+
+---
+
+## Definition of Done
+
+*   [ ] Backend and frontend implemented per this spec (**FR-00N** satisfied)
+*   [ ] **Success Criteria (SC-00N)** met
+*   [ ] `features/reference/data-model.md` updated (if schema changed)
+*   [ ] `features/reference/api.md` updated (if API changed)
+*   [ ] `features/reference/behavior.md` updated (if product rules changed)
+
+---
+
+## Out of Scope
+
+*   User Authorization
+*   Anything specified in another feature file

@@ -78,3 +78,63 @@
 * **When** I enter an item ID and quantity to change the stock to
 * **And** The item does not exist in the system
 * **Then** I am informed that the item does not exist and the database remains unchanged
+
+## Data Ownership & Isolation
+Invenotry data is shared between users
+| Rule | Requirement |
+|------|-------------|
+| **Read scope** | Only logged in Warehouse Managers can see inventory information  |
+| **Write scope** | Only logged in Warehouse Admins can edit or remove inventory information of an item if the item exists `id` and `req.user.id` |
+| **Create scope** | Item inventories should be automatically created when an item is created |
+| **Cross-user access** | Accessing data without sufficient permission levels returns a `404` |
+| **UI scope** | UI shows only data returned for the signed-in user |
+| **Implementation** | Shared helper in `app/authorization/` — do not duplicate scope in every controller |
+
+## API Requirements
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/inventory/read` | Yes | Read an item's inventory |
+| `POST` | `/inventory/edit` | Yes | Change an item's inventory |
+
+**Create / edit success response** (flat JSON, no envelope):
+```json
+{
+  "itemType": "ExampleItem",
+  "itemCount": 1
+}
+```
+
+**Error response:** `{ "message": "Human-readable explanation." }` with appropriate HTTP status.
+
+---
+
+## Screen Requirements
+
+### [View: Read Page] — route name `read`
+*   Uses a `MenuBar` to quickly leave page.
+*   No text fields
+*   Displays item type and count
+
+### [View: Edit Page] — route name `edit`
+*   Fields: item type and inventory
+*   Primary action: **Edit Inventory**.
+*   Buttons to save or cancel editing of inventory
+*   Verify pressing of save or cancel button
+
+---
+
+## Definition of Done
+
+*   [ ] Backend and frontend implemented per this spec (**FR-00N** satisfied)
+*   [ ] **Success Criteria (SC-00N)** met
+*   [ ] `features/reference/data-model.md` updated (if schema changed)
+*   [ ] `features/reference/api.md` updated (if API changed)
+*   [ ] `features/reference/behavior.md` updated (if product rules changed)
+
+---
+
+## Out of Scope
+
+*   User Authorization
+*   Anything specified in another feature file

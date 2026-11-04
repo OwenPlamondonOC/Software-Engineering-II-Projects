@@ -78,3 +78,73 @@
 * **When** I enter a supplier and new information regarding the supplier
 * **And** The supplier does not exist in the system
 * **Then** I am informed that the supplier does not exist and the database remains unchanged
+
+## Data Ownership & Isolation
+Supplier data is shared between users
+| Rule | Requirement |
+|------|-------------|
+| **Read scope** | Only logged in Warehouse Managers can see suppliers  |
+| **Write scope** | Only logged in Warehouse Admins can edit or remove suppliers if they exist `id` and `req.user.id` |
+| **Create scope** | Only logged in Warehouse Admins can add new suppliers |
+| **Cross-user access** | Accessing data without sufficient permission levels returns a `404` |
+| **UI scope** | UI shows only data returned for the signed-in user |
+| **Implementation** | Shared helper in `app/authorization/` — do not duplicate scope in every controller |
+
+## API Requirements
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/suppliers/read` | Yes | Read a supplier's information |
+| `POST` | `/suppliers/edit` | Yes | Change an existing supplier's information |
+| `POST` | `/suppliers/add` | Yes | Add a new supplier |
+
+**Create / edit success response** (flat JSON, no envelope):
+```json
+{
+  "supplierid": 1,
+  "supplierName": "Example",
+  "supplierAddress": "ExAddress",
+  "supplierPhone": "111-111-1111:",
+  "supplierEmail": "example@example.ex"
+}
+```
+
+**Error response:** `{ "message": "Human-readable explanation." }` with appropriate HTTP status.
+
+---
+
+## Screen Requirements
+
+### [View: Read Page] — route name `read`
+*   Uses a `MenuBar` to quickly leave page.
+*   No text fields
+*   Displays supplier information
+
+### [View: Edit Page] — route name `edit`
+*   Fields: fields for all data of the supplier.
+*   Primary action: **Edit Supplier**.
+*   Buttons to save or cancel editing of supplier
+*   Verify pressing of save or cancel button
+
+### [View: Add Page] — route name `add`
+*   Fields: fields for all data of the supplier.
+*   Primary action: **Add Supplier**.
+*   Buttons to save or cancel addition of supplier
+*   Verify pressing of save or cancel button
+
+---
+
+## Definition of Done
+
+*   [ ] Backend and frontend implemented per this spec (**FR-00N** satisfied)
+*   [ ] **Success Criteria (SC-00N)** met
+*   [ ] `features/reference/data-model.md` updated (if schema changed)
+*   [ ] `features/reference/api.md` updated (if API changed)
+*   [ ] `features/reference/behavior.md` updated (if product rules changed)
+
+---
+
+## Out of Scope
+
+*   User Authorization
+*   Anything specified in another feature file

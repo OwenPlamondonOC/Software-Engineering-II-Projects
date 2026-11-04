@@ -71,3 +71,69 @@
 * **When** The worker notices or creates an empty bin
 * **And** they scan that bin's UPC
 * **Then** The system creates a report that the bin is empty and requests a refill
+
+## Data Ownership & Isolation
+Each worker can accept a picking assignment. Warehouse managers can see all assignments
+| Rule | Requirement |
+|------|-------------|
+| **Read scope** | Only logged in Warehouse Workers and Warehouse Managers can see picking assignments  |
+| **Write scope** | Only logged in Warehouse Admins can edit or remove assignments if they exist `id` and `req.user.id` |
+| **Create scope** | Only logged in Warehouse Admins can add new assignments, and the system can create them |
+| **Cross-user access** | Accessing data without sufficient permission levels returns a `404` |
+| **UI scope** | UI shows only data returned for the signed-in user |
+| **Implementation** | Shared helper in `app/authorization/` — do not duplicate scope in every controller |
+
+## API Requirements
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/pick-assignment/access` | Yes | Access a picking assignment |
+| `POST` | `/pick-assignment/edit` | Yes | Change an existing picking assignment |
+| `POST` | `/pick-assignment/add` | Yes | Add a new picking assignment |
+
+**Create / edit success response** (flat JSON, no envelope):
+```json
+{
+  "assignmentid": 1,
+}
+```
+
+**Error response:** `{ "message": "Human-readable explanation." }` with appropriate HTTP status.
+
+---
+
+## Screen Requirements
+
+### [View: Read Page] — route name `access`
+*   Uses a `MenuBar` to quickly leave page.
+*   No text fields
+*   Displays route and all items to be picked
+
+### [View: Edit Page] — route name `edit`
+*   Fields: fields for all data of the picking assignment.
+*   Primary action: **Edit Picking Assignment**.
+*   Buttons to save or cancel editing of picking assignment
+*   Verify pressing of save or cancel button
+
+### [View: Add Page] — route name `add`
+*   Fields: fields for all data of the picking assignment.
+*   Primary action: **Add Picking Assignment**.
+*   Buttons to save or cancel addition of picking assigment
+*   Verify pressing of save or cancel button
+
+---
+
+## Definition of Done
+
+*   [ ] Backend and frontend implemented per this spec (**FR-00N** satisfied)
+*   [ ] **Success Criteria (SC-00N)** met
+*   [ ] `features/reference/data-model.md` updated (if schema changed)
+*   [ ] `features/reference/api.md` updated (if API changed)
+*   [ ] `features/reference/behavior.md` updated (if product rules changed)
+
+---
+
+## Out of Scope
+
+*   User Authorization
+*   Anything specified in another feature file

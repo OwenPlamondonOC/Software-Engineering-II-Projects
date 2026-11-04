@@ -78,3 +78,70 @@
 * **When** I enter a route and new information regarding the route
 * **And** The route does not exist in the system
 * **Then** I am informed that the route does not exist and the database remains unchanged
+
+## Data Ownership & Isolation
+Route data is shared between users
+| Rule | Requirement |
+|------|-------------|
+| **Read scope** | Only logged in Warehouse Managers and Truck Drivers can see route information  |
+| **Write scope** | Only logged in Warehouse Admins can edit or remove existing routes `id` and `req.user.id` |
+| **Create scope** | Only logged in Warehouse Admins can create new routes |
+| **Cross-user access** | Accessing data without sufficient permission levels returns a `404` |
+| **UI scope** | UI shows only data returned for the signed-in user |
+| **Implementation** | Shared helper in `app/authorization/` — do not duplicate scope in every controller |
+
+## API Requirements
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/route/read` | Yes | Read data of a specific route |
+| `POST` | `/route/edit` | Yes | Change an existing route's information |
+| `POST` | `/route/create` | Yes | Create a new route |
+
+**Create / edit success response** (flat JSON, no envelope):
+```json
+{
+  "routeid": 1,
+  "routeName": "name"
+}
+```
+
+**Error response:** `{ "message": "Human-readable explanation." }` with appropriate HTTP status.
+
+---
+
+## Screen Requirements
+
+### [View: Read Page] — route name `read`
+*   Uses a `MenuBar` to quickly leave page.
+*   No text fields
+*   Displays route information
+
+### [View: Edit Page] — route name `edit`
+*   Fields: fields for all data of the route.
+*   Primary action: **Edit Route**.
+*   Buttons to save or cancel editing of route
+*   Verify pressing of save or cancel button
+
+### [View: Create Page] — route name `create`
+*   Fields: fields for all data of the route.
+*   Primary action: **Create Route**.
+*   Buttons to save or cancel creating of route
+*   Verify pressing of save or cancel button
+
+---
+
+## Definition of Done
+
+*   [ ] Backend and frontend implemented per this spec (**FR-00N** satisfied)
+*   [ ] **Success Criteria (SC-00N)** met
+*   [ ] `features/reference/data-model.md` updated (if schema changed)
+*   [ ] `features/reference/api.md` updated (if API changed)
+*   [ ] `features/reference/behavior.md` updated (if product rules changed)
+
+---
+
+## Out of Scope
+
+*   User Authorization
+*   Anything specified in another feature file

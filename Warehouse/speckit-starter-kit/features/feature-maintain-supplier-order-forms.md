@@ -78,3 +78,69 @@
 * **When** I enter a supplier order form and new information regarding the supplier order form
 * **And** The supplier order form does not exist in the system
 * **Then** I am informed that the supplier order form does not exist and the database remains unchanged
+
+## Data Ownership & Isolation
+Supplier Order Form data is shared between users
+| Rule | Requirement |
+|------|-------------|
+| **Read scope** | Only logged in Warehouse Managers can see order forms  |
+| **Write scope** | Only logged in Warehouse Admins can edit or remove order forms if they exist `id` and `req.user.id` |
+| **Create scope** | Only logged in Warehouse Admins can create new order forms |
+| **Cross-user access** | Accessing data without sufficient permission levels returns a `404` |
+| **UI scope** | UI shows only data returned for the signed-in user |
+| **Implementation** | Shared helper in `app/authorization/` — do not duplicate scope in every controller |
+
+## API Requirements
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/supplier-forms/read` | Yes | Read a supplier order form |
+| `POST` | `/supplier-forms/edit` | Yes | Change an existing supplier order form's information |
+| `POST` | `/supplier-forms/create` | Yes | Create a new supplier order form |
+
+**Create / edit success response** (flat JSON, no envelope):
+```json
+{
+  "formid": 1
+}
+```
+
+**Error response:** `{ "message": "Human-readable explanation." }` with appropriate HTTP status.
+
+---
+
+## Screen Requirements
+
+### [View: Read Page] — route name `read`
+*   Uses a `MenuBar` to quickly leave page.
+*   No text fields
+*   Displays supplier order form id and full contents of the form
+
+### [View: Edit Page] — route name `edit`
+*   Fields: fields for form id and all data of the form.
+*   Primary action: **Edit Supplier Order Form**.
+*   Buttons to save or cancel editing of supplier order form
+*   Verify pressing of save or cancel button
+
+### [View: Create Page] — route name `create`
+*   Fields: fields for form id and all data of the form.
+*   Primary action: **Create Supplier Order Form**.
+*   Buttons to save or cancel creating of supplier order form
+*   Verify pressing of save or cancel button
+
+---
+
+## Definition of Done
+
+*   [ ] Backend and frontend implemented per this spec (**FR-00N** satisfied)
+*   [ ] **Success Criteria (SC-00N)** met
+*   [ ] `features/reference/data-model.md` updated (if schema changed)
+*   [ ] `features/reference/api.md` updated (if API changed)
+*   [ ] `features/reference/behavior.md` updated (if product rules changed)
+
+---
+
+## Out of Scope
+
+*   User Authorization
+*   Anything specified in another feature file

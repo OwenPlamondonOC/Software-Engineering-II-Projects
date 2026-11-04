@@ -118,3 +118,75 @@
 * **When** I enter an item ID and value to change the description to
 * **And** The item does not exist in the system
 * **Then** I am informed that the item does not exist and the database remains unchanged
+
+## Data Ownership & Isolation
+Item data is shared between users
+| Rule | Requirement |
+|------|-------------|
+| **Read scope** | Only logged in Warehouse Managers can see item types and information  |
+| **Write scope** | Only logged in Warehouse Admins can edit or remove items if the item exists `id` and `req.user.id` |
+| **Create scope** | Only logged in Warehouse Admins can create new items |
+| **Cross-user access** | Accessing data without sufficient permission levels returns a `404` |
+| **UI scope** | UI shows only data returned for the signed-in user |
+| **Implementation** | Shared helper in `app/authorization/` — do not duplicate scope in every controller |
+
+## API Requirements
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/items/read` | Yes | Read data of a specific item |
+| `POST` | `/items/edit` | Yes | Change an existing item's information |
+| `POST` | `/items/create` | Yes | Create a new item type |
+
+**Create / edit success response** (flat JSON, no envelope):
+```json
+{
+  "itemid": 1,
+  "itemName": "name",
+  "price": "$0.00",
+  "SKU": "sku",
+  "UPC": "11111111111",
+  "Supplier": "supplier",
+  "description": "desc"
+}
+```
+
+**Error response:** `{ "message": "Human-readable explanation." }` with appropriate HTTP status.
+
+---
+
+## Screen Requirements
+
+### [View: Read Page] — route name `read`
+*   Uses a `MenuBar` to quickly leave page.
+*   No text fields
+*   Displays item id, name, price, SKU, UPC, Supplier, and description
+
+### [View: Edit Page] — route name `edit`
+*   Fields: id, name, price, SKU, UPC, Supplier, description.
+*   Primary action: **Edit Item**.
+*   Buttons to save or cancel editing of item
+*   Verify pressing of save or cancel button
+
+### [View: Create Page] — route name `create`
+*   Fields: id, name, price, SKU, UPC, Supplier, description.
+*   Primary action: **Create Item**.
+*   Buttons to save or cancel creating of item
+*   Verify pressing of save or cancel button
+
+---
+
+## Definition of Done
+
+*   [ ] Backend and frontend implemented per this spec (**FR-00N** satisfied)
+*   [ ] **Success Criteria (SC-00N)** met
+*   [ ] `features/reference/data-model.md` updated (if schema changed)
+*   [ ] `features/reference/api.md` updated (if API changed)
+*   [ ] `features/reference/behavior.md` updated (if product rules changed)
+
+---
+
+## Out of Scope
+
+*   User Authorization
+*   Anything specified in another feature file

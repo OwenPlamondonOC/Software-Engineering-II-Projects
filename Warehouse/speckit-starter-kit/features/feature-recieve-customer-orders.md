@@ -38,3 +38,53 @@
 * **And** The system recieves the order and reports it to a warehosue manager
 * **When** The manager rejects the order
 * **Then** The system discards the order
+
+## Data Ownership & Isolation
+Each worker can accept a picking assignment. Warehouse managers can see all assignments
+| Rule | Requirement |
+|------|-------------|
+| **Read scope** | Only logged in Warehouse Workers and Warehouse Managers can see picking assignments  |
+| **Cross-user access** | Accessing data without sufficient permission levels returns a `404` |
+| **UI scope** | UI shows only data returned for the signed-in user |
+| **Implementation** | Shared helper in `app/authorization/` — do not duplicate scope in every controller |
+
+## API Requirements
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/picking-assignment/access` | Yes | Access a picking assignment |
+
+**Create / edit success response** (flat JSON, no envelope):
+```json
+{
+  "assignmentid": 1,
+}
+```
+
+**Error response:** `{ "message": "Human-readable explanation." }` with appropriate HTTP status.
+
+---
+
+## Screen Requirements
+
+### [View: Read Page] — route name `access`
+*   Uses a `MenuBar` to quickly leave page.
+*   No text fields
+*   Displays route and all items to be picked
+
+---
+
+## Definition of Done
+
+*   [ ] Backend and frontend implemented per this spec (**FR-00N** satisfied)
+*   [ ] **Success Criteria (SC-00N)** met
+*   [ ] `features/reference/data-model.md` updated (if schema changed)
+*   [ ] `features/reference/api.md` updated (if API changed)
+*   [ ] `features/reference/behavior.md` updated (if product rules changed)
+
+---
+
+## Out of Scope
+
+*   User Authorization
+*   Anything specified in another feature file

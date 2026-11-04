@@ -1,0 +1,119 @@
+# Feature: Put Away Orders
+**Feature ID:** PO
+**Branch pattern:** `feature/PO-put-away-orders`
+**Status:** Draft
+**Created:** 2026-09-27
+
+---
+## User Stories
+### US-N.1: Generate route
+**As a** Warehouse worker
+**I want to** accept an order for putting away
+**So that** the system generates an efficient route through the warehouse to put the items away
+**Priority:** P1
+**Independent test:** accept a test order and see it generate a route
+**Acceptance scenarios:** see ### US-N.1 under Acceptance Criteria
+### US-N.2: Put Away an Item
+**As a** Warehouse worker
+**I want to** scan an item's location while putting it away
+**So that** the system confirms that is the correct location and updates the stock in that location in the database
+**Priority:** P1
+**Independent test:** scan a location for an item and see it update in the database
+**Acceptance scenarios:** see ### US-N.2 under Acceptance Criteria
+
+---
+## Requirements
+### Functional Requirements
+- **FR-001**: System MUST know what items are in the warehouse
+- **FR-002**: System MUST know where items have been stored
+- **FR-001**: System MUST recieve input for new item locations
+
+---
+## Key Entities
+- **User**: warehouse worker; moves items in the warehouse and maintains information in the database
+- **Database**: information storage; tracks information inputted by warehouse workers
+
+---
+## Acceptance Criteria
+### US-N.1 - Generate route
+#### Scenario: Worker accepts an order and gets a route
+* **Given** An order has been recieved and is not put away yet
+* **When** A worker accepts the order to put away
+* **Then** The system generates a list of locations to put each item in in an efficient order
+### US-N.2 - Put Away an Item
+#### Scenario: Worker puts an item away in an available spot in the warehouse
+* **Given** A worker puts an item in a vacant spot in the warehouse
+* **When** The worker scans the location of the item in the warehouse
+* **And** The system does not currently believe another item is in that location
+* **Then** The system updates the database to add that location to where that item is stored
+#### Scenario: Worker puts an item away in an unavailable spot in the warehouse
+* **Given** A worker puts an item in a vacant spot in the warehouse
+* **When** The worker scans the location of the item in the warehouse
+* **And** The system believes another item is currently in that location
+* **Then** The system warns the user that the location is incorrect
+
+## Data Ownership & Isolation
+Each worker can accept a putaway assignment. Warehouse managers can see all assignments
+| Rule | Requirement |
+|------|-------------|
+| **Read scope** | Only logged in Warehouse Workers and Warehouse Managers can see putaway assignments  |
+| **Write scope** | Only logged in Warehouse Admins can edit or remove assignments if they exist `id` and `req.user.id` |
+| **Create scope** | Only logged in Warehouse Admins can add new assignments, and the system can create them |
+| **Cross-user access** | Accessing data without sufficient permission levels returns a `404` |
+| **UI scope** | UI shows only data returned for the signed-in user |
+| **Implementation** | Shared helper in `app/authorization/` — do not duplicate scope in every controller |
+
+## API Requirements
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/putaway-assignment/access` | Yes | Access a putaway assignment |
+| `POST` | `/putaway-assignment/edit` | Yes | Change an existing putaway assignment |
+| `POST` | `/putaway-assignment/add` | Yes | Add a new putaway assignment |
+
+**Create / edit success response** (flat JSON, no envelope):
+```json
+{
+  "assignmentid": 1,
+}
+```
+
+**Error response:** `{ "message": "Human-readable explanation." }` with appropriate HTTP status.
+
+---
+
+## Screen Requirements
+
+### [View: Read Page] — route name `access`
+*   Uses a `MenuBar` to quickly leave page.
+*   No text fields
+*   Displays route and all items to be putaway
+
+### [View: Edit Page] — route name `edit`
+*   Fields: fields for all data of the putawat assignment.
+*   Primary action: **Edit Putaway Assignment**.
+*   Buttons to save or cancel editing of putaway assignment
+*   Verify pressing of save or cancel button
+
+### [View: Add Page] — route name `add`
+*   Fields: fields for all data of the putaway assignment.
+*   Primary action: **Add Putaway Assignment**.
+*   Buttons to save or cancel addition of putaway assigment
+*   Verify pressing of save or cancel button
+
+---
+
+## Definition of Done
+
+*   [ ] Backend and frontend implemented per this spec (**FR-00N** satisfied)
+*   [ ] **Success Criteria (SC-00N)** met
+*   [ ] `features/reference/data-model.md` updated (if schema changed)
+*   [ ] `features/reference/api.md` updated (if API changed)
+*   [ ] `features/reference/behavior.md` updated (if product rules changed)
+
+---
+
+## Out of Scope
+
+*   User Authorization
+*   Anything specified in another feature file

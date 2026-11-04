@@ -78,3 +78,73 @@
 * **When** I enter a customer and new information regarding the customer
 * **And** The customer does not exist in the system
 * **Then** I am informed that the customer does not exist and the database remains unchanged
+
+## Data Ownership & Isolation
+Customer data is shared between users
+| Rule | Requirement |
+|------|-------------|
+| **Read scope** | Only logged in Warehouse Managers can see customers  |
+| **Write scope** | Only logged in Warehouse Admins can edit or remove customers if they exist `id` and `req.user.id` |
+| **Create scope** | Only logged in Warehouse Admins can add new customers |
+| **Cross-user access** | Accessing data without sufficient permission levels returns a `404` |
+| **UI scope** | UI shows only data returned for the signed-in user |
+| **Implementation** | Shared helper in `app/authorization/` — do not duplicate scope in every controller |
+
+## API Requirements
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/customers/read` | Yes | Read a customer's information |
+| `POST` | `/customers/edit` | Yes | Change an existing customer's information |
+| `POST` | `/customers/add` | Yes | Add a new customer |
+
+**Create / edit success response** (flat JSON, no envelope):
+```json
+{
+  "customerid": 1,
+  "customerName": "Example",
+  "customerAddress": "ExAddress",
+  "customerPhone": "111-111-1111:",
+  "customerEmail": "example@example.ex"
+}
+```
+
+**Error response:** `{ "message": "Human-readable explanation." }` with appropriate HTTP status.
+
+---
+
+## Screen Requirements
+
+### [View: Read Page] — route name `read`
+*   Uses a `MenuBar` to quickly leave page.
+*   No text fields
+*   Displays customer information
+
+### [View: Edit Page] — route name `edit`
+*   Fields: fields for all data of the customer.
+*   Primary action: **Edit Customer**.
+*   Buttons to save or cancel editing of customer
+*   Verify pressing of save or cancel button
+
+### [View: Add Page] — route name `add`
+*   Fields: fields for all data of the customer.
+*   Primary action: **Add Customer**.
+*   Buttons to save or cancel addition of customer
+*   Verify pressing of save or cancel button
+
+---
+
+## Definition of Done
+
+*   [ ] Backend and frontend implemented per this spec (**FR-00N** satisfied)
+*   [ ] **Success Criteria (SC-00N)** met
+*   [ ] `features/reference/data-model.md` updated (if schema changed)
+*   [ ] `features/reference/api.md` updated (if API changed)
+*   [ ] `features/reference/behavior.md` updated (if product rules changed)
+
+---
+
+## Out of Scope
+
+*   User Authorization
+*   Anything specified in another feature file

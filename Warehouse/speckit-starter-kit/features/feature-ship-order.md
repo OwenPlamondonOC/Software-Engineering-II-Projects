@@ -70,3 +70,70 @@
 * **Given** A truck is filled with correct orders
 * **When** A truck driver accepts the assignment for that truck
 * **Then** The system generates a route for the truck driver to follow
+
+## Data Ownership & Isolation
+Delivery data is shared between users
+| Rule | Requirement |
+|------|-------------|
+| **Read scope** | Only logged in Warehouse Managers and Truck Drivers can see deliveries  |
+| **Write scope** | Only logged in Warehouse Admins can edit deliveries if they exist `id` and `req.user.id` |
+| **Create scope** | Only logged in Warehouse Admins can add new deliveries |
+| **Cross-user access** | Accessing data without sufficient permission levels returns a `404` |
+| **UI scope** | UI shows only data returned for the signed-in user |
+| **Implementation** | Shared helper in `app/authorization/` — do not duplicate scope in every controller |
+
+## API Requirements
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/ship/read` | Yes | Access a delivery route |
+| `POST` | `/ship/edit` | Yes | Change an existing delivery route |
+| `POST` | `/ship/add` | Yes | Add a new delivery |
+
+**Create / edit success response** (flat JSON, no envelope):
+```json
+{
+  "deliveryid": 1,
+  "truckDriver": "Example",
+}
+```
+
+**Error response:** `{ "message": "Human-readable explanation." }` with appropriate HTTP status.
+
+---
+
+## Screen Requirements
+
+### [View: Read Page] — route name `read`
+*   Uses a `MenuBar` to quickly leave page.
+*   No text fields
+*   Displays delivery information
+
+### [View: Edit Page] — route name `edit`
+*   Fields: fields for all data of the delivery.
+*   Primary action: **Edit Delivery**.
+*   Buttons to save or cancel editing of delivery
+*   Verify pressing of save or cancel button
+
+### [View: Add Page] — route name `add`
+*   Fields: fields for all data of the delivery.
+*   Primary action: **Add Delivery**.
+*   Buttons to save or cancel addition of delivery
+*   Verify pressing of save or cancel button
+
+---
+
+## Definition of Done
+
+*   [ ] Backend and frontend implemented per this spec (**FR-00N** satisfied)
+*   [ ] **Success Criteria (SC-00N)** met
+*   [ ] `features/reference/data-model.md` updated (if schema changed)
+*   [ ] `features/reference/api.md` updated (if API changed)
+*   [ ] `features/reference/behavior.md` updated (if product rules changed)
+
+---
+
+## Out of Scope
+
+*   User Authorization
+*   Anything specified in another feature file
