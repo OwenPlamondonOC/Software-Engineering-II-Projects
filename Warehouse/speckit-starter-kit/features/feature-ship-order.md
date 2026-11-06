@@ -135,5 +135,5 @@ Delivery data is shared between users
 
 ## Out of Scope
 
-*   User Authorization
+*   User Authorizations
 *   Anything specified in another feature file
