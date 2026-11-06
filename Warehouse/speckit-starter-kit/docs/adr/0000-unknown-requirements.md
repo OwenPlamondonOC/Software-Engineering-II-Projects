@@ -21,16 +21,20 @@ I do not know what the consequences of my actions will be.
 - At least one ADR actually ends up existing
 - I get some practice writing and reading ADRs
 
+
+
 ### Negative / tradeoffs
 
 - Might not be correct in the slightest
 
+
+
 ## Alternatives considered
 
 
-| Option                    | Why not                                                                                                                      |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Not even writing this ADR | I'm trying my best, which isn't a lot, but it's better than nothing                                                          |
-| Having AI do it for me    | The assignment doesn't actually say not to, but it seems like the wrong thing to do, and won't help my lack of understanding |
+| Option                    | Why not                                                             |
+| ------------------------- | ------------------------------------------------------------------- |
+| Not even writing this ADR | I'm trying my best, which isn't a lot, but it's better than nothing |
+| Having AI do it for me    | The assignment not to                                               |
 
 
